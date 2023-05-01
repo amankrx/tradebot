@@ -1,5 +1,6 @@
+mod limit_order_book;
 mod matching_engine;
-use matching_engine::orderbook::{OrderBook, Order, OrderType};
+use matching_engine::orderbook::{Order, OrderBook, OrderType};
 use rust_decimal_macros::dec;
 
 fn main() {

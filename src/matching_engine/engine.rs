@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use rust_decimal::prelude::*;
 use super::orderbook::{Order, OrderBook};
+use rust_decimal::prelude::*;
+use std::collections::HashMap;
 
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 pub struct TradingPair {
@@ -10,10 +10,7 @@ pub struct TradingPair {
 
 impl TradingPair {
     pub fn new(base: String, quote: String) -> TradingPair {
-        TradingPair {
-            base,
-            quote,
-        }
+        TradingPair { base, quote }
     }
 
     pub fn to_string(&self) -> String {
@@ -37,13 +34,21 @@ impl MatchingEngine {
         println!("Added new market: {:?}", pair);
     }
 
-    pub fn place_limit_order(&mut self, price: Decimal, pair: TradingPair, order: Order) -> Result<(), String> {
+    pub fn place_limit_order(
+        &mut self,
+        price: Decimal,
+        pair: TradingPair,
+        order: Order,
+    ) -> Result<(), String> {
         match self.orderbooks.get_mut(&pair) {
             Some(orderbook) => {
                 orderbook.add_limit_order(order, price);
                 Ok(())
             }
-            None => Err(format!("No orderbook for trading pair: {:?}", pair.to_string())),
+            None => Err(format!(
+                "No orderbook for trading pair: {:?}",
+                pair.to_string()
+            )),
         }
     }
 }

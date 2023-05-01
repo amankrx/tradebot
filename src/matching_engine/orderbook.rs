@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use rust_decimal::prelude::*;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum OrderType {
@@ -24,7 +24,7 @@ impl OrderBook {
     pub fn fill_market_order(&mut self, market_order: &mut Order) {
         let limits = match market_order.order_type {
             OrderType::Bid => self.ask_limits(),
-            OrderType::Ask => self.bid_limits()
+            OrderType::Ask => self.bid_limits(),
         };
 
         for limit_order in limits {
@@ -50,26 +50,22 @@ impl OrderBook {
 
     pub fn add_limit_order(&mut self, order: Order, price: Decimal) {
         match order.order_type {
-            OrderType::Bid => {
-                match self.bids.get_mut(&price) {
-                    Some(limit_order) => limit_order.add_order(order),
-                    None => {
-                        let mut limit_order = LimitOrder::new(price.clone());
-                        limit_order.add_order(order);
-                        self.bids.insert(price, limit_order);
-                    }
+            OrderType::Bid => match self.bids.get_mut(&price) {
+                Some(limit_order) => limit_order.add_order(order),
+                None => {
+                    let mut limit_order = LimitOrder::new(price.clone());
+                    limit_order.add_order(order);
+                    self.bids.insert(price, limit_order);
                 }
-            }
-            OrderType::Ask => {
-                match self.asks.get_mut(&price) {
-                    Some(limit_order) => limit_order.add_order(order),
-                    None => {
-                        let mut limit_order = LimitOrder::new(price.clone());
-                        limit_order.add_order(order);
-                        self.asks.insert(price, limit_order);
-                    }
+            },
+            OrderType::Ask => match self.asks.get_mut(&price) {
+                Some(limit_order) => limit_order.add_order(order),
+                None => {
+                    let mut limit_order = LimitOrder::new(price.clone());
+                    limit_order.add_order(order);
+                    self.asks.insert(price, limit_order);
                 }
-            }
+            },
         }
     }
 }
@@ -102,11 +98,11 @@ impl LimitOrder {
                 true => {
                     market_order.size -= limit_order.size;
                     limit_order.size = 0.0
-                },
+                }
                 false => {
                     limit_order.size -= market_order.size;
                     market_order.size = 0.0
-                },
+                }
             }
 
             if market_order.is_filled() {
@@ -153,7 +149,6 @@ pub mod tests {
         let mut market_order = Order::new(10.0, OrderType::Bid);
         orderbook.fill_market_order(&mut market_order);
 
-
         let ask_limits = orderbook.ask_limits();
         let matched_limit = ask_limits.get(0).unwrap();
 
@@ -170,7 +165,7 @@ pub mod tests {
         let mut limit = LimitOrder::new(price);
         let buy_limit_order_a = Order::new(100.0, OrderType::Bid);
         let buy_limit_order_b = Order::new(100.0, OrderType::Bid);
- 
+
         limit.add_order(buy_limit_order_a);
         limit.add_order(buy_limit_order_b);
 
